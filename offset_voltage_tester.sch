@@ -5,10 +5,6 @@ V {}
 S {}
 F {}
 E {}
-N 40 140 40 160 {lab=BLB}
-N -40 140 -40 160 {lab=BL}
-N 40 220 40 240 {lab=#net1}
-N -40 220 -40 240 {lab=#net2}
 C {simulator_commands.sym} 240 -50 0 0 {name=COMMANDS
 simulator=ngspice
 only_toplevel=true 
@@ -23,12 +19,12 @@ value="
 .param VCM=1.175
 .param VIND_INIT=0
 
-.param TPER=10n
-.param TSE_DLY=4n
-.param TSE_W=3n
-.param TR=100p
-.param TF=100p
-.param TEVAL=6.5n
+.param TPER=2n
+.param TSE_DLY=0.35n
+.param TSE_W=0.75n
+.param TR=50p
+.param TF=50p
+.param TEVAL=1.00n
 
 VDD_S VDD 0 \{VDD\}
 
@@ -60,10 +56,12 @@ let vin_max = 0.05
 let vind_range = vin_max - vin_min
 let nbit = 10
 let voutd_th = 0
+let out_pol = 1
 
-let tstep = 20p
-let tper = 10n
-let teval = 6.5n
+let tstep = 10p
+let tper = 2n
+let teval = 1.00n
+let tmax = 10p
 
 let max_cycles = 4 * nbit + 4
 let tstop = max_cycles * tper
@@ -73,7 +71,7 @@ set scratch = $curplot
 
 let run = 0
 dowhile run < mc_runs
-    source /foss/designs/sram-sense-amp/xschem/offset_voltage_tester/offset_voltage_tester.sp
+    source /foss/designs/offset_voltage_tester/offset_voltage_tester.sp
     
     let run = run + 1
 end
@@ -82,18 +80,8 @@ rusage time
 
 .endc
 "}
-C {lab_wire.sym} -40 140 0 0 {name=p9 sig_type=std_logic lab=BL}
-C {lab_wire.sym} 40 140 0 1 {name=p10 sig_type=std_logic lab=BLB}
-C {capa.sym} -40 190 0 0 {name=C1
-m=1
-value=0.5p
-footprint=1206
-device="ceramic capacitor"}
-C {capa.sym} 40 190 0 0 {name=C2
-m=1
-value=0.5p
-footprint=1206
-device="ceramic capacitor"}
+C {lab_wire.sym} -120 140 0 1 {name=p9 sig_type=std_logic lab=BL}
+C {lab_wire.sym} -40 140 0 1 {name=p10 sig_type=std_logic lab=BLB}
 C {/foss/designs/sram_sense_amp/cells/blocks/sense_amp/schematic/sense-amp.sym} 0 0 0 0 {name=x1}
 C {lab_wire.sym} 70 -80 1 0 {name=p11 sig_type=std_logic lab=BLB}
 C {lab_wire.sym} -150 0 0 0 {name=p12 sig_type=std_logic lab=SE}
@@ -102,5 +90,9 @@ C {lab_wire.sym} -70 -80 1 0 {name=p14 sig_type=std_logic lab=BL}
 C {gnd.sym} 0 80 0 0 {name=l8 lab=0}
 C {lab_wire.sym} 150 30 0 1 {name=p15 sig_type=std_logic lab=Voutn}
 C {lab_wire.sym} 150 -30 0 1 {name=p16 sig_type=std_logic lab=Voutp}
-C {gnd.sym} -40 240 0 0 {name=l1 lab=0}
-C {gnd.sym} 40 240 0 0 {name=l2 lab=0}
+C {lab_wire.sym} 40 140 0 1 {name=p1 sig_type=std_logic lab=Voutp}
+C {lab_wire.sym} 120 140 0 1 {name=p2 sig_type=std_logic lab=Voutn}
+C {parax_cap.sym} -120 150 0 0 {name=C1 gnd=0 value=50f m=1}
+C {parax_cap.sym} -40 150 0 0 {name=C2 gnd=0 value=50f m=1}
+C {parax_cap.sym} 40 150 0 0 {name=C3 gnd=0 value=10f m=1}
+C {parax_cap.sym} 120 150 0 0 {name=C4 gnd=0 value=10f m=1}
